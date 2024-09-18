@@ -5,35 +5,7 @@
   box-sizing: border-box;
 }
 
-/* ... (códigos anteriores permanecem) */
-
-/* Centralizar a mídia dentro da mensagem */
-.message-bubble .media {
-  display: block;
-  margin: 10px auto;
-}
-
-/* Estilos para a seção de informações do usuário */
-.user-details {
-  padding: 15px;
-  background-color: #fff;
-  text-align: center;
-}
-
-.user-details h2 {
-  font-size: 24px;
-  color: #075e54;
-  margin-bottom: 5px;
-}
-
-.user-details p {
-  font-size: 16px;
-  color: #555;
-}
-
-/* ... (restante do código permanece o mesmo) */
-
-/* Estilos gerais */
+/* General Styles */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f0f0f0;
@@ -322,9 +294,12 @@ button#proceedToLogin:hover {
 }
 
 .message-details {
+  background-color: #f1f1f1;
+  padding: 5px 10px;
+  border-radius: 5px;
   font-size: 12px;
   color: #555;
-  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .input-message {
@@ -378,7 +353,13 @@ button#proceedToLogin:hover {
   border-radius: 10px;
 }
 
-/* Estilos para imagens */
+/* Center media inside the message */
+.message-bubble .media {
+  display: block;
+  margin: 10px auto;
+}
+
+/* Styles for images */
 .image-media {
   max-width: 100%;
   max-height: 300px;
@@ -387,7 +368,7 @@ button#proceedToLogin:hover {
   object-fit: contain;
 }
 
-/* Estilos para vídeos */
+/* Styles for videos */
 .video-media {
   max-width: 100%;
   max-height: 300px;
@@ -443,7 +424,7 @@ button#proceedToLogin:hover {
   display: none;
 }
 
-/* Estilo para a exibição da chave pública do usuário */
+/* Style for displaying the user's public key */
 .user-info {
   color: #fff;
   font-size: 14px;
@@ -451,7 +432,25 @@ button#proceedToLogin:hover {
   word-break: break-all;
 }
 
-/* Estilos para o container de filtro */
+/* Styles for the user details section */
+.user-details {
+  padding: 15px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.user-details h2 {
+  font-size: 24px;
+  color: #075e54;
+  margin-bottom: 5px;
+}
+
+.user-details p {
+  font-size: 16px;
+  color: #555;
+}
+
+/* Styles for the filter container */
 .filter-container {
   display: flex;
   align-items: center;

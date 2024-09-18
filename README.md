@@ -1,2 +1,3 @@
 # Nostral
- 
+ Nostr Client Message - under code...
+v0.5 

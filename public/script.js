@@ -3,9 +3,9 @@ import { generatePrivateKey, getPublicKey, nip19, SimplePool } from 'https://cdn
 
 let privateKey = null;
 let publicKey = null;
-let filterWord = '#bitcoin'; // Palavra de filtro padrão
+let filterWord = '#bitcoin'; // Default filter word
 
-// Lista de URLs de relé
+// List of relay URLs
 const relayUrls = [
   "wss://relay.damus.io",
   "wss://relay.snort.social",
@@ -19,14 +19,14 @@ const relayUrls = [
   "wss://nostr.openchain.fr"
 ];
 
-// Cache para metadados do usuário
+// Cache for user metadata
 const metadataCache = {};
 
-// Inicializar o SimplePool
+// Initialize SimplePool
 let pool = new SimplePool();
-let subs = null; // Armazenar a subscrição atual
+let subs = null; // Store the current subscription
 
-// Função de login
+// Login function
 document.getElementById('login').addEventListener('click', () => {
   const nsecInput = document.getElementById('privateKey').value.trim();
 
@@ -36,103 +36,103 @@ document.getElementById('login').addEventListener('click', () => {
       privateKey = data;
       publicKey = getPublicKey(privateKey);
 
-      // Ocultar mensagem de erro, se houver
+      // Hide error message if any
       document.getElementById('error').style.display = 'none';
 
-      // Limpar o campo de chave privada
+      // Clear the private key field
       document.getElementById('privateKey').value = '';
 
-      // Mostrar a tela de mensagens e ocultar a tela de login
+      // Show the message screen and hide the login screen
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('messageScreen').style.display = 'flex';
 
-      // Exibir a chave pública do usuário
-      document.getElementById('userPublicKey').textContent = `Você está conectado como: ${nip19.npubEncode(publicKey)}`;
+      // Display the user's public key
+      document.getElementById('userPublicKey').textContent = `You are logged in as: ${nip19.npubEncode(publicKey)}`;
 
-      // Buscar e exibir os metadados do usuário logado
+      // Fetch and display the logged-in user's metadata
       fetchLoggedInUserMetadata();
 
-      // Carregar mensagens iniciais
+      // Load initial messages
       loadMessages();
 
     } else {
-      document.getElementById('error').innerText = 'Chave privada inválida';
+      document.getElementById('error').innerText = 'Invalid private key';
       document.getElementById('error').style.display = 'block';
     }
   } catch (error) {
-    console.error('Erro ao decodificar a chave privada:', error);
-    document.getElementById('error').innerText = 'Falha ao decodificar a chave privada nsec1';
+    console.error('Error decoding private key:', error);
+    document.getElementById('error').innerText = 'Failed to decode nsec1 private key';
     document.getElementById('error').style.display = 'block';
   }
 });
 
-// Função para buscar os metadados do usuário logado
+// Function to fetch the logged-in user's metadata
 async function fetchLoggedInUserMetadata() {
   const fetcher = NostrFetcher.init();
   const { username, displayName } = await fetchUserMetadata(publicKey, fetcher);
   
-  // Atualizar o DOM com as informações do usuário
-  document.getElementById('userDisplayName').textContent = displayName || 'Usuário';
+  // Update the DOM with user information
+  document.getElementById('userDisplayName').textContent = displayName || 'User';
   document.getElementById('userUsername').textContent = username ? `@${username}` : '';
 }
 
-// Função para criar nova chave
+// Function to create a new key
 document.getElementById('createKey').addEventListener('click', () => {
-  // Gerar nova chave privada
+  // Generate a new private key
   privateKey = generatePrivateKey();
   publicKey = getPublicKey(privateKey);
 
-  // Codificar as chaves em formato nsec1 e npub1
+  // Encode the keys in nsec1 and npub1 formats
   const nsec = nip19.nsecEncode(privateKey);
   const npub = nip19.npubEncode(publicKey);
 
-  // Definir as textareas com as chaves
+  // Set the textareas with the keys
   document.getElementById('generatedPrivateKey').value = nsec;
   document.getElementById('generatedPublicKey').value = npub;
 
-  // Mostrar a tela de geração de chaves e ocultar a tela de login
+  // Show the key generation screen and hide the login screen
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('keyGenerationScreen').style.display = 'flex';
 });
 
-// Função para copiar chave privada
+// Function to copy the private key
 document.getElementById('copyPrivateKey').addEventListener('click', () => {
   const privateKeyText = document.getElementById('generatedPrivateKey').value;
   navigator.clipboard.writeText(privateKeyText).then(() => {
-    alert('Chave privada copiada para a área de transferência.');
+    alert('Private key copied to clipboard.');
   }).catch(err => {
-    console.error('Erro ao copiar chave privada:', err);
+    console.error('Error copying private key:', err);
   });
 });
 
-// Função para copiar chave pública
+// Function to copy the public key
 document.getElementById('copyPublicKey').addEventListener('click', () => {
   const publicKeyText = document.getElementById('generatedPublicKey').value;
   navigator.clipboard.writeText(publicKeyText).then(() => {
-    alert('Chave pública copiada para a área de transferência.');
+    alert('Public key copied to clipboard.');
   }).catch(err => {
-    console.error('Erro ao copiar chave pública:', err);
+    console.error('Error copying public key:', err);
   });
 });
 
-// Função para continuar para o login
+// Function to proceed to login
 document.getElementById('proceedToLogin').addEventListener('click', () => {
-  // Ocultar tela de geração de chaves e mostrar tela de login
+  // Hide the key generation screen and show the login screen
   document.getElementById('keyGenerationScreen').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
 });
 
-// Função de logout
+// Logout function
 document.getElementById('logout').addEventListener('click', () => {
-  // Limpar variáveis
+  // Clear variables
   privateKey = null;
   publicKey = null;
 
-  // Ocultar tela de mensagens e mostrar tela de login
+  // Hide the message screen and show the login screen
   document.getElementById('messageScreen').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
 
-  // Encerrar subscrições
+  // Close subscriptions
   if (subs) {
     subs.unsub();
     subs = null;
@@ -140,20 +140,19 @@ document.getElementById('logout').addEventListener('click', () => {
   pool.close(relayUrls);
 });
 
-
-// Função para verificar o status dos relés
+// Function to check relay status
 document.getElementById('checkRelayStatus').addEventListener('click', async () => {
   const relayStatusSection = document.getElementById('relayStatusSection');
   const relayStatusList = document.getElementById('relayStatusList');
   relayStatusList.innerHTML = '';
 
-  // Alternar a exibição da seção de status dos relés
+  // Toggle the display of the relay status section
   relayStatusSection.style.display = relayStatusSection.style.display === 'none' ? 'block' : 'none';
 
   if (relayStatusSection.style.display === 'block') {
     const statusPromises = relayUrls.map(async (relayUrl) => {
       const li = document.createElement('li');
-      li.textContent = `Verificando ${relayUrl}...`;
+      li.textContent = `Checking ${relayUrl}...`;
       relayStatusList.appendChild(li);
 
       try {
@@ -162,9 +161,9 @@ document.getElementById('checkRelayStatus').addEventListener('click', async () =
         await new Promise((resolve, reject) => {
           const timeoutId = setTimeout(() => {
             ws.close();
-            li.textContent = `${relayUrl} está `;
+            li.textContent = `${relayUrl} is `;
             const statusSpan = document.createElement('span');
-            statusSpan.textContent = 'Sem resposta';
+            statusSpan.textContent = 'No response';
             statusSpan.classList.add('offline');
             li.appendChild(statusSpan);
             reject();
@@ -172,7 +171,7 @@ document.getElementById('checkRelayStatus').addEventListener('click', async () =
 
           ws.onopen = () => {
             clearTimeout(timeoutId);
-            li.textContent = `${relayUrl} está `;
+            li.textContent = `${relayUrl} is `;
             const statusSpan = document.createElement('span');
             statusSpan.textContent = 'Online';
             statusSpan.classList.add('online');
@@ -183,7 +182,7 @@ document.getElementById('checkRelayStatus').addEventListener('click', async () =
 
           ws.onerror = () => {
             clearTimeout(timeoutId);
-            li.textContent = `${relayUrl} está `;
+            li.textContent = `${relayUrl} is `;
             const statusSpan = document.createElement('span');
             statusSpan.textContent = 'Offline';
             statusSpan.classList.add('offline');
@@ -193,10 +192,10 @@ document.getElementById('checkRelayStatus').addEventListener('click', async () =
           };
         });
       } catch (error) {
-        console.error(`Erro ao verificar ${relayUrl}:`, error);
-        li.textContent = `${relayUrl} está `;
+        console.error(`Error checking ${relayUrl}:`, error);
+        li.textContent = `${relayUrl} is `;
         const statusSpan = document.createElement('span');
-        statusSpan.textContent = 'Erro';
+        statusSpan.textContent = 'Error';
         statusSpan.classList.add('offline');
         li.appendChild(statusSpan);
       }
@@ -206,13 +205,13 @@ document.getElementById('checkRelayStatus').addEventListener('click', async () =
   }
 });
 
-// Função para aplicar o filtro
+// Function to apply the filter
 document.getElementById('applyFilter').addEventListener('click', () => {
   filterWord = document.getElementById('filterWord').value.trim();
   if (!filterWord) {
-    filterWord = ''; // Sem filtro
+    filterWord = ''; // No filter
   }
-  // Atualizar mensagens com o novo filtro
+  // Update messages with the new filter
   if (subs) {
     subs.unsub();
     subs = null;
@@ -221,26 +220,26 @@ document.getElementById('applyFilter').addEventListener('click', () => {
   loadMessages();
 });
 
-// Função para atualizar as mensagens
+// Function to refresh messages
 document.getElementById('refreshMessages').addEventListener('click', () => {
-  // Encerrar a subscrição atual, se houver
+  // Close the current subscription if any
   if (subs) {
     subs.unsub();
     subs = null;
   }
-  // Limpar mensagens
+  // Clear messages
   document.getElementById('messages').innerHTML = '';
-  // Carregar mensagens novamente
+  // Load messages again
   loadMessages();
 });
 
-// Formatar timestamp
+// Format timestamp
 function formatTimestamp(timestamp) {
   const date = new Date(timestamp * 1000);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// Função para buscar metadados de um usuário
+// Function to fetch user metadata
 async function fetchUserMetadata(pubkey, fetcher) {
   if (metadataCache[pubkey]) {
     return metadataCache[pubkey];
@@ -250,25 +249,25 @@ async function fetchUserMetadata(pubkey, fetcher) {
     if (event) {
       const metadata = JSON.parse(event.content);
       const result = {
-        username: metadata.name || 'Desconhecido',
-        displayName: metadata.display_name || 'Desconhecido'
+        username: metadata.name || 'Unknown',
+        displayName: metadata.display_name || 'Unknown'
       };
       metadataCache[pubkey] = result;
       return result;
     }
   } catch (error) {
-    console.error(`Erro ao buscar metadados para ${pubkey}:`, error);
+    console.error(`Error fetching metadata for ${pubkey}:`, error);
   }
-  return { username: 'Desconhecido', displayName: 'Desconhecido' };
+  return { username: 'Unknown', displayName: 'Unknown' };
 }
 
-// Função para carregar mensagens
+// Function to load messages
 async function loadMessages() {
   const fetcher = NostrFetcher.init();
   const loadingDiv = document.getElementById('loading');
   const messagesList = document.getElementById('messages');
 
-  // Mostrar mensagem de carregamento
+  // Show loading message
   loadingDiv.style.display = 'block';
 
   try {
@@ -276,17 +275,17 @@ async function loadMessages() {
 
     let messageCount = 0;
 
-    // Buscar eventos dos últimos 15 minutos
+    // Fetch events from the last 15 minutes
     const nMinutesAgo = (mins) => Math.floor((Date.now() - mins * 60 * 1000) / 1000);
     const postIter = fetcher.allEventsIterator(
       relayUrls,
       { kinds: [eventKind.text] },
-      { since: nMinutesAgo(15) }, // Últimos 15 minutos
+      { since: nMinutesAgo(15) }, // Last 15 minutes
       { skipVerification: true }
     );
 
     for await (const ev of postIter) {
-      // Aplicar filtro
+      // Apply filter
       if (filterWord === '' || ev.content.includes(filterWord)) {
         const li = document.createElement('li');
 
@@ -299,19 +298,19 @@ async function loadMessages() {
         const messageContent = document.createElement('div');
         messageContent.textContent = ev.content;
 
-        // Exibir mídia
+        // Display media
         const mediaUrlMatch = ev.content.match(/(https?:\/\/[^\s]+?\.(?:jpg|jpeg|png|gif|mp4|webm))/gi);
         if (mediaUrlMatch) {
           mediaUrlMatch.forEach(url => {
             let mediaElement;
             if (url.match(/\.(mp4|webm)$/i)) {
-              // Vídeo
+              // Video
               mediaElement = document.createElement('video');
               mediaElement.src = url;
               mediaElement.classList.add('media', 'video-media');
               mediaElement.controls = true;
             } else {
-              // Imagem
+              // Image
               mediaElement = document.createElement('img');
               mediaElement.src = url;
               mediaElement.classList.add('media', 'image-media');
@@ -324,10 +323,11 @@ async function loadMessages() {
 
         const messageDetails = document.createElement('div');
         messageDetails.classList.add('message-details');
-        messageDetails.textContent = `Postado por: ${username} (${displayName}) | ${formatTimestamp(ev.created_at)} | ${npubUser}`;
+        messageDetails.textContent = `Posted by: ${username} (${displayName}) | ${formatTimestamp(ev.created_at)} | ${npubUser}`;
 
-        li.appendChild(messageBubble);
+        // Add elements in the desired order
         li.appendChild(messageDetails);
+        li.appendChild(messageBubble);
 
         messagesList.appendChild(li);
 
@@ -337,29 +337,29 @@ async function loadMessages() {
 
     if (messageCount === 0) {
       const noMessages = document.createElement('p');
-      noMessages.textContent = 'Nenhuma mensagem encontrada.';
+      noMessages.textContent = 'No messages found.';
       messagesList.appendChild(noMessages);
     }
 
   } catch (error) {
-    console.error('Erro ao buscar eventos:', error);
+    console.error('Error fetching events:', error);
     messagesList.innerHTML = '';
     const errorMsg = document.createElement('p');
     errorMsg.style.color = 'red';
-    errorMsg.textContent = 'Erro ao buscar mensagens. Por favor, tente novamente mais tarde.';
+    errorMsg.textContent = 'Error fetching messages. Please try again later.';
     messagesList.appendChild(errorMsg);
   } finally {
-    // Ocultar mensagem de carregamento
+    // Hide loading message
     loadingDiv.style.display = 'none';
   }
 
-  // Iniciar o monitoramento em tempo real
+  // Start real-time monitoring
   startRealTimeMonitoring();
 }
 
-// Função para iniciar a escuta em tempo real
+// Function to start real-time monitoring
 function startRealTimeMonitoring() {
-  // Encerrar a subscrição atual, se houver
+  // Close the current subscription if any
   if (subs) {
     subs.unsub();
   }
@@ -367,7 +367,7 @@ function startRealTimeMonitoring() {
   const filters = [
     {
       kinds: [eventKind.text],
-      since: Math.floor(Date.now() / 1000), // Eventos a partir de agora
+      since: Math.floor(Date.now() / 1000), // Events from now
     }
   ];
 
@@ -388,19 +388,19 @@ function startRealTimeMonitoring() {
       const messageContent = document.createElement('div');
       messageContent.textContent = event.content;
 
-      // Exibir mídia
+      // Display media
       const mediaUrlMatch = event.content.match(/(https?:\/\/[^\s]+?\.(?:jpg|jpeg|png|gif|mp4|webm))/gi);
       if (mediaUrlMatch) {
         mediaUrlMatch.forEach(url => {
           let mediaElement;
           if (url.match(/\.(mp4|webm)$/i)) {
-            // Vídeo
+            // Video
             mediaElement = document.createElement('video');
             mediaElement.src = url;
             mediaElement.classList.add('media', 'video-media');
             mediaElement.controls = true;
           } else {
-            // Imagem
+            // Image
             mediaElement = document.createElement('img');
             mediaElement.src = url;
             mediaElement.classList.add('media', 'image-media');
@@ -413,19 +413,20 @@ function startRealTimeMonitoring() {
 
       const messageDetails = document.createElement('div');
       messageDetails.classList.add('message-details');
-      messageDetails.textContent = `Postado por: ${username} (${displayName}) | ${formatTimestamp(event.created_at)} | ${npubUser}`;
+      messageDetails.textContent = `Posted by: ${username} (${displayName}) | ${formatTimestamp(event.created_at)} | ${npubUser}`;
 
-      li.appendChild(messageBubble);
+      // Add elements in the desired order
       li.appendChild(messageDetails);
+      li.appendChild(messageBubble);
 
       messagesList.appendChild(li);
 
-      // Scroll para o final
+      // Scroll to the bottom
       messagesList.scrollTop = messagesList.scrollHeight;
     }
   });
 
   subs.on('eose', () => {
-    console.log('Fim dos eventos armazenados');
+    console.log('End of stored events');
   });
 }

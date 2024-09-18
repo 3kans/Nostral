@@ -1,58 +1,58 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nostr Client com Filtro Personalizado</title>
+  <title>Nostr Client with Custom Filter</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Tela de Login -->
+  <!-- Login Screen -->
   <div id="loginScreen" class="screen">
     <header>
       <h1>Nostr</h1>
     </header>
     <main>
       <div class="login-container">
-        <h2>Bem-vindo(a)</h2>
-        <p>Faça login para continuar</p>
+        <h2>Welcome</h2>
+        <p>Please log in to continue</p>
         <div class="input-group">
-          <label for="privateKey">Chave privada nsec1:</label>
+          <label for="privateKey">Private Key nsec1:</label>
           <input type="text" id="privateKey" placeholder="nsec1..." />
         </div>
         <div id="error" class="error-message" style="display: none;"></div>
         <button id="login">Login</button>
-        <p class="or-separator">ou</p>
-        <button id="createKey">Criar Nova Chave</button>
+        <p class="or-separator">or</p>
+        <button id="createKey">Create New Key</button>
       </div>
     </main>
   </div>
 
-  <!-- Tela de Geração de Chaves -->
+  <!-- Key Generation Screen -->
   <div id="keyGenerationScreen" class="screen" style="display: none;">
     <header>
       <h1>Nostr</h1>
     </header>
     <main>
       <div class="key-generation-container">
-        <h2>Suas Novas Chaves</h2>
-        <p>Guarde sua chave privada em um local seguro. Ela não poderá ser recuperada se perdida.</p>
+        <h2>Your New Keys</h2>
+        <p>Store your private key in a safe place. It cannot be recovered if lost.</p>
         <div class="key-group">
-          <label>Chave Privada (nsec1):</label>
+          <label>Private Key (nsec1):</label>
           <textarea id="generatedPrivateKey" readonly></textarea>
-          <button id="copyPrivateKey">Copiar Chave Privada</button>
+          <button id="copyPrivateKey">Copy Private Key</button>
         </div>
         <div class="key-group">
-          <label>Chave Pública (npub1):</label>
+          <label>Public Key (npub1):</label>
           <textarea id="generatedPublicKey" readonly></textarea>
-          <button id="copyPublicKey">Copiar Chave Pública</button>
+          <button id="copyPublicKey">Copy Public Key</button>
         </div>
-        <button id="proceedToLogin">Continuar para o Login</button>
+        <button id="proceedToLogin">Continue to Login</button>
       </div>
     </main>
   </div>
 
-  <!-- Tela de Mensagens -->
+  <!-- Message Screen -->
   <div id="messageScreen" class="screen" style="display: none;">
     <header>
       <div class="header-content">
@@ -61,31 +61,31 @@
           <p id="userPublicKey"></p>
         </div>
         <div class="header-buttons">
-          <button id="refreshMessages" class="header-button">Atualizar Mensagens</button>
-          <button id="checkRelayStatus" class="header-button">Status dos Relés</button>
-          <button id="logout" class="logout-button">Sair</button>
+          <button id="refreshMessages" class="header-button">Refresh Messages</button>
+          <button id="checkRelayStatus" class="header-button">Relay Status</button>
+          <button id="logout" class="logout-button">Logout</button>
         </div>
       </div>
     </header>
     <main>
-      <!-- Informações do Usuário -->
+      <!-- User Information -->
       <div class="user-details">
-        <h2 id="userDisplayName">Nome do Usuário</h2>
+        <h2 id="userDisplayName">User Name</h2>
         <p id="userUsername">@username</p>
       </div>
 
-      <!-- Campo de filtro -->
+      <!-- Filter Field -->
       <div class="filter-container">
-        <label for="filterWord">Filtrar por palavra:</label>
-        <input type="text" id="filterWord" placeholder="Digite a palavra-chave" value="#bitcoin" />
-        <button id="applyFilter">Aplicar Filtro</button>
+        <label for="filterWord">Filter by word:</label>
+        <input type="text" id="filterWord" placeholder="Enter keyword" value="#bitcoin" />
+        <button id="applyFilter">Apply Filter</button>
       </div>
       <div id="relayStatusSection" style="display: none;">
-        <h2 id="relayStatus">Status dos Relés:</h2>
+        <h2 id="relayStatus">Relay Status:</h2>
         <ul id="relayStatusList"></ul>
       </div>
-      <!-- Mensagem de carregamento -->
-      <div id="loading" class="loading-message" style="display: none;">Carregando mensagens...</div>
+      <!-- Loading Message -->
+      <div id="loading" class="loading-message" style="display: none;">Loading messages...</div>
       <div class="messages-container">
         <ul id="messages"></ul>
       </div>
